@@ -27,7 +27,7 @@ const handleSubmit = async (e) => {
   console.log("Expense data entered:", expense);
 
   try {
-    const response = await fetch("/api/expenses", {
+    const response = await fetch("https://expensematecrud.onrender.com/api/expenses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

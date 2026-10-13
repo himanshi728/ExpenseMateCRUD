@@ -12,7 +12,7 @@ function Home() {
 useEffect(() => {
   const fetchExpenses = async () => {
     try {
-      const response = await fetch("/api/expenses");
+      const response = await fetch("https://expensematecrud.onrender.com/api/expenses");
       const json = await response.json();
       if (response.ok) {
         setExpenses(json);
