@@ -7,11 +7,17 @@ const expenseRoutes = require("./routes/expense");
 const app = express();
 
 // 2. Middleware
+
+const cors = require("cors");
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type"],
+    origin: [
+      "http://localhost:5173",
+      "https://expense-mate-crud-db.vercel.app",
+    ],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
