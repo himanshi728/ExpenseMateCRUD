@@ -8,8 +8,6 @@ const app = express();
 
 // 2. Middleware
 
-const cors = require("cors");
-
 app.use(
   cors({
     origin: [
