@@ -1,64 +1,64 @@
-import  { useState } from 'react';
-
+import { useState } from "react";
 import { Plus, ChevronDown } from "lucide-react";
 
-export default function AddExpenseCard() {
-  const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('Food');
-  const [type, setType] = useState('expense');
-const [date, setDate] = useState(
-  new Date().toISOString().split('T')[0]
-);
- 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+export default function ExpenseCard({ onExpenseAdded }) {
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState("Food");
+  const [type, setType] = useState("expense");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [loading, setLoading] = useState(false);
 
-  console.log("Form submitted");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const expense = {
-    title,
-    amount: Number(amount),
-    category,
-    type,
-    date,
-  };
-
-  console.log("Expense data entered:", expense);
-
-  try {
-    const response = await fetch("https://expensematecrud.onrender.com/api/expenses", {
-      method: "POST",
-      body: JSON.stringify(expense),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    console.log("API response status:", response.status);
-
-    const json = await response.json();
-
-    console.log("Backend response data:", json);
-
-    if (!response.ok) {
-      throw new Error(json.error || "Failed to add expense");
+    if (!title || !amount) {
+      alert("Please fill in both title and amount");
+      return;
     }
 
-    console.log("Expense added successfully!");
+    const expense = {
+      title,
+      amount: Number(amount),
+      category,
+      type,
+      date,
+    };
 
-    // Reset the form
-    setTitle("");
-    setAmount("");
-    setCategory("Food");
-    setType("expense");
-    setDate(new Date().toISOString().split("T")[0]);
+    try {
+      setLoading(true);
+      const response = await fetch("https://expensematecrud.onrender.com/api/expenses", {
+        method: "POST",
+        body: JSON.stringify(expense),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  } catch (error) {
-    console.error("Error adding expense:", error.message);
-  }
-};
+      const json = await response.json();
 
+      if (!response.ok) {
+        throw new Error(json.error || "Failed to add expense");
+      }
+
+      // Notify parent to update the list immediately
+      if (onExpenseAdded) {
+        onExpenseAdded(json);
+      }
+
+      // Reset the form
+      setTitle("");
+      setAmount("");
+      setCategory("Food");
+      setType("expense");
+      setDate(new Date().toISOString().split("T")[0]);
+    } catch (error) {
+      console.error("Error adding expense:", error.message);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm font-sans">
@@ -76,29 +76,32 @@ const handleSubmit = async (e) => {
           <input
             id="expense-title"
             type="text"
+            required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Lunch"
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-base text-[#111827] placeholder:text-gray-400"
+            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-base text-[#111827] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#035933]"
           />
         </div>
-<div className="space-y-2">
-  <label
-    htmlFor="date"
-    className="block text-sm font-semibold text-[#374151]"
-  >
-    Date
-  </label>
 
-  <input
-    id="date"
-    type="date"
-    value={date}
-    onChange={(e) => setDate(e.target.value)}
-    className="w-full rounded-xl border border-gray-200 px-4 py-3"
-    required
-  />
-</div>
+        {/* Date */}
+        <div className="space-y-2">
+          <label
+            htmlFor="date"
+            className="block text-sm font-semibold text-[#374151]"
+          >
+            Date
+          </label>
+          <input
+            id="date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#035933]"
+            required
+          />
+        </div>
+
         {/* Amount & Category Row */}
         <div className="grid grid-cols-2 gap-4">
           {/* Amount */}
@@ -114,10 +117,11 @@ const handleSubmit = async (e) => {
               <input
                 id="amount"
                 type="number"
+                required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="e.g. 250"
-                className="w-full rounded-xl border border-gray-200 pl-8 pr-4 py-3 text-base text-[#111827] placeholder:text-gray-400"
+                className="w-full rounded-xl border border-gray-200 pl-8 pr-4 py-3 text-base text-[#111827] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#035933]"
               />
             </div>
           </div>
@@ -135,7 +139,7 @@ const handleSubmit = async (e) => {
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full  rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-[#111827]   pr-10"
+                className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-[#111827] pr-10 focus:outline-none focus:ring-2 focus:ring-[#035933]"
               >
                 <option value="Food">Food</option>
                 <option value="Transport">Transport</option>
@@ -143,27 +147,22 @@ const handleSubmit = async (e) => {
                 <option value="Entertainment">Entertainment</option>
               </select>
 
-              {/* Custom Down Arrow */}
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-600">
-              
-             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-600">
-             <ChevronDown size={18} />
-             </div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-500">
+                <ChevronDown size={18} />
               </div>
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
-       
-       <button
-           type="submit"
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#035933] py-3.5 px-4 text-base font-semibold text-white cursor-pointer shadow-sm"
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#035933] py-3.5 px-4 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer shadow-sm"
         >
-        <Plus size={20} strokeWidth={2.5} />
-        Add Expense
-      </button>
-        
+          <Plus size={20} strokeWidth={2.5} />
+          {loading ? "Adding..." : "Add Expense"}
+        </button>
       </form>
     </div>
   );
