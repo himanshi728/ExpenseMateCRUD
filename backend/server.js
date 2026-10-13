@@ -1,12 +1,19 @@
 const express = require("express");
 require("dotenv").config();
 const mongoose = require("mongoose");
-// const cors = require("cors");
+const cors = require("cors"); // 1. Import CORS
 const expenseRoutes = require("./routes/expense");
 
 const app = express();
-// middleware
-app.use(express.json());
+
+// 2. Middleware
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  }),
+);
 
 app.use(express.json());
 

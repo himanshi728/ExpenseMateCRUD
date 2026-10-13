@@ -1,6 +1,9 @@
 import TransactionItem from "./TransactionItem";
 
 export default function RecentTransactions({ expenses }) {
+   const handleClick = () => {
+    alert("Button clicked!");
+  };
   return (
     <section className="w-full max-w-md mx-auto p-4 space-y-4">
       {/* Header rendered once */}
@@ -8,7 +11,8 @@ export default function RecentTransactions({ expenses }) {
         <h3 className="text-xl font-bold text-slate-900 tracking-tight">
           Recent expenses
         </h3>
-        <button className="text-sm font-semibold text-emerald-800 hover:text-emerald-900 transition-colors">
+        <button onClick={handleClick}
+         className="text-sm font-semibold text-emerald-800 hover:text-emerald-900 transition-colors">
           View all
         </button>
       </div>

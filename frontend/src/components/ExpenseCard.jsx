@@ -29,10 +29,10 @@ const handleSubmit = async (e) => {
   try {
     const response = await fetch("https://expensematecrud.onrender.com/api/expenses", {
       method: "POST",
+      body: JSON.stringify(expense),
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(expense),
     });
 
     console.log("API response status:", response.status);
