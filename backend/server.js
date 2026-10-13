@@ -13,6 +13,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://expense-mate-crud-db.vercel.app",
+      "https://expense-mate-crud-jzqm.vercel.app",
     ],
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
